@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.TerraceNotifyDao">
+    <resultMap id="TerraceNotifyMap" type="com.arms.service.model.TerraceNotify">
+        <id column="ID" property="id" jdbcType="INTEGER" />
+        <result column="CELLPHONE" property="cellphone" jdbcType="VARCHAR" />
+        <result column="AMOUNT" property="amount" jdbcType="DOUBLE" />
+        <result column="TERRACE_ID" property="terraceId" jdbcType="INTEGER" />
+        <result column="TIME_LIMIT" property="timeLimit" jdbcType="SMALLINT" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.arms.service.model.TerraceNotify" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pd_terrace_notify
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cellphone != null">
+                CELLPHONE,
+            </if>
+            <if test="amount > 0">
+                AMOUNT,
+            </if>
+            <if test="terraceId > 0">
+                TERRACE_ID,
+            </if>
+            <if test="timeLimit > 0">
+                TIME_LIMIT,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="cellphone != null">
+                #{cellphone},
+            </if>
+            <if test="amount > 0">
+                #{amount},
+            </if>
+            <if test="terraceId > 0">
+                #{terraceId},
+            </if>
+            <if test="timeLimit > 0">
+                #{timeLimit},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="select" parameterType="int" resultMap="TerraceNotifyMap">
+        SELECT * FROM pd_terrace_notify WHERE ID=#{id}
+    </select>
+
+    <select id="selectByCellphone" parameterType="string" resultMap="TerraceNotifyMap">
+        SELECT * FROM pd_terrace_notify WHERE CELLPHONE=#{cellphone}
+        ORDER BY GMT_CREATE DESC
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="selectList" parameterType="string" resultMap="TerraceNotifyMap">
+        SELECT * FROM pd_terrace_notify
+        ORDER BY GMT_CREATE DESC
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="selectByTerraceId" parameterType="string" resultMap="TerraceNotifyMap">
+        SELECT * FROM pd_terrace_notify
+        WHERE TERRACE_ID=#{terraceId}
+        ORDER BY GMT_CREATE DESC
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+</mapper>

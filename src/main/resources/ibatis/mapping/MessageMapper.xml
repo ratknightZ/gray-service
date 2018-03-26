@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.MessageDao">
+    <resultMap id="MessageMap" type="com.arms.service.model.Message">
+        <id column="ID" property="id" jdbcType="BIGINT" />
+        <result column="FROM_USER_ID" property="fromUserId" jdbcType="BIGINT" />
+        <result column="TO_USER_ID" property="toUserId" jdbcType="BIGINT" />
+        <result column="TITLE" property="title" jdbcType="VARCHAR" />
+        <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.arms.service.model.Message" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pd_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fromUserId >= 0">
+                FROM_USER_ID,
+            </if>
+            <if test="toUserId >= 0">
+                TO_USER_ID,
+            </if>
+            <if test="title != null">
+                TITLE,
+            </if>
+            <if test="content != null">
+                CONTENT,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="fromUserId >= 0">
+                #{fromUserId},
+            </if>
+            <if test="toUserId >= 0">
+                #{toUserId},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="select" parameterType="long" resultMap="MessageMap">
+        SELECT * FROM pd_message WHERE ID=#{id}
+    </select>
+
+    <update id="update" parameterType="com.arms.service.model.Message">
+        UPDATE pd_message
+        <set>
+            <if test="fromUserId >= 0">
+                FROM_USER_ID=#{fromUserId},
+            </if>
+            <if test="toUserId >= 0">
+                TO_USER_ID=#{toUserId},
+            </if>
+            <if test="title != null">
+                TITLE=#{title},
+            </if>
+            <if test="content != null">
+                CONTENT=#{content},
+            </if>
+        </set>
+        WHERE ID=#{id}
+    </update>
+
+    <select id="selectByUserId" parameterType="string" resultMap="MessageMap">
+        SELECT * FROM pd_message WHERE TO_USER_ID=0 OR TO_USER_ID=#{userId}
+        ORDER BY GMT_CREATE DESC
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <delete id="deleteByContent" parameterType="string">
+        DELETE FROM pd_message WHERE CONTENT=#{content}
+    </delete>
+</mapper>

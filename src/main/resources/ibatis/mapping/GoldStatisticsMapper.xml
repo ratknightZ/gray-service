@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.arms.service.dao.GoldStatisticsDao">
+    <resultMap id="GoldStatisticsMap" type="com.arms.service.model.GoldStatistics">
+        <id column="USER_ID" property="userId" jdbcType="BIGINT" />
+        <result column="GOLD" property="gold" jdbcType="INTEGER" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="selectRankList" parameterType="string" resultMap="GoldStatisticsMap">
+        SELECT * FROM pd_gold_statistics
+        ORDER BY GOLD DESC
+        <if test="start >= 0">
+            <if test="limit > 0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="selectGoldRankLocation" parameterType="int" resultType="Integer">
+        SELECT rowNo FROM
+        (Select USER_ID,(@rowNum:=@rowNum+1) as rowNo
+        FROM
+        pd_gold_statistics,
+        (Select (@rowNum :=0) ) b
+        ORDER BY GOLD DESC,USER_ID ASC) c
+        WHERE USER_ID=#{userId}
+    </select>
+
+    <insert id="statistic">
+        INSERT INTO pd_gold_statistics(USER_ID,GOLD)
+        SELECT USER_ID,IFNULL(SUM(`VALUE`),0)
+        FROM assets_gold_account GROUP BY USER_ID
+        ON DUPLICATE KEY UPDATE GOLD=VALUES(GOLD)
+    </insert>
+</mapper>

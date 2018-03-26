@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.arms.service.dao.GoldAccountDao">
+    <resultMap id="GoldAccountMap" type="com.arms.service.model.GoldAccount">
+        <id column="ID" property="id" jdbcType="BIGINT" />
+        <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+        <result column="VALUE" property="value" jdbcType="INTEGER" />
+        <result column="GOLD_TYPE" property="goldType" jdbcType="TINYINT" />
+        <result column="TYPE_REFERENCE_PRIMARY_KEY" property="typeReferencePrimaryKey" jdbcType="VARCHAR" />
+        <result column="SKETCH" property="sketch" jdbcType="VARCHAR" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="selectUserGold" parameterType="int" resultType="int">
+        SELECT IFNULL(SUM(`VALUE`),0) FROM assets_gold_account WHERE USER_ID=#{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.arms.service.model.GoldAccount">
+        INSERT INTO assets_gold_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId > 0">
+                USER_ID,
+            </if>
+            `VALUE`,
+            <if test="goldType > 0">
+                GOLD_TYPE,
+            </if>
+            <if test="typeReferencePrimaryKey != null">
+                TYPE_REFERENCE_PRIMARY_KEY,
+            </if>
+            <if test="sketch != null">
+                SKETCH,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId > 0">
+                #{userId},
+            </if>
+            #{value},
+            <if test="goldType > 0">
+                #{goldType},
+            </if>
+            <if test="typeReferencePrimaryKey != null">
+                #{typeReferencePrimaryKey},
+            </if>
+            <if test="sketch != null">
+                #{sketch},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectByUserId" parameterType="string" resultMap="GoldAccountMap">
+        SELECT * FROM assets_gold_account
+        WHERE USER_ID=#{userId}
+        ORDER BY GMT_CREATE DESC
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="sumRoomGold" parameterType="string" resultType="int">
+        SELECT IFNULL(SUM(`VALUE`),0) FROM assets_gold_account
+        INNER JOIN user_play ON TYPE_REFERENCE_PRIMARY_KEY=user_play.ID
+        WHERE GOLD_TYPE=3
+        <if test="roomId > 0">
+            AND ROOM_ID=#{roomId}
+        </if>
+        <if test="startTime != null">
+            AND assets_gold_account.GMT_CREATE >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND assets_gold_account.GMT_CREATE &lt; #{endTime}
+        </if>
+    </select>
+</mapper>

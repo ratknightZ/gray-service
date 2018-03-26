@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.SuperiorRelationDao">
+    <select id="selectSuperiorId" parameterType="int" resultType="Integer">
+        SELECT SUPERIOR_USER_ID FROM user_superior_relation WHERE USER_ID=#{userId}
+    </select>
+
+    <insert id="insert" parameterType="string">
+        INSERT INTO user_superior_relation(USER_ID,SUPERIOR_USER_ID)
+        VALUES(#{userId},#{superiorUserId})
+    </insert>
+
+    <select id="countJunior" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM user_superior_relation
+        WHERE SUPERIOR_USER_ID=#{userId}
+    </select>
+</mapper>

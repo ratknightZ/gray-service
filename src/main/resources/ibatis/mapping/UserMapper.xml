@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.arms.service.dao.UserDao">
+	<resultMap id="UserMap" type="com.arms.service.model.User">
+		<id column="ID" property="id" jdbcType="BIGINT" />
+		<result column="CELLPHONE" property="cellphone" jdbcType="VARCHAR" />
+		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+		<result column="NICK" property="nick" jdbcType="VARCHAR" />
+		<result column="AVATAR" property="avatar" jdbcType="VARCHAR" />
+		<result column="WECHAT_OPEN_ID" property="wechatOpenId" jdbcType="VARCHAR" />
+		<result column="ROLE_AUTH" property="roleAuth" jdbcType="VARCHAR"/>
+		<result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+		<result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap id="UserLendSourceIpBoMap" type="com.arms.service.bo.UserLendSourceIpBo">
+		<id column="ID" property="userId" jdbcType="BIGINT" />
+		<result column="CELLPHONE" property="cellphone" jdbcType="VARCHAR" />
+		<result column="GMT_CREATE" property="registerTime" jdbcType="TIMESTAMP" />
+		<result column="COUNT_LEND_INFO" property="countLendInfo" jdbcType="INTEGER" />
+		<result column="SOURCE" property="source" jdbcType="VARCHAR" />
+		<result column="IP" property="ip" jdbcType="VARCHAR" />
+		<result column="COUNT_IP" property="countIp" jdbcType="INTEGER" />
+	</resultMap>
+
+	<insert id="insert" parameterType="com.arms.service.model.User"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO user_basic
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="cellphone != null">
+				CELLPHONE,
+			</if>
+			<if test="email != null">
+				EMAIL,
+			</if>
+			<if test="password != null">
+				PASSWORD,
+			</if>
+			<if test="nick != null">
+				NICK,
+			</if>
+			<if test="avatar != null">
+				AVATAR,
+			</if>
+			<if test="wechatOpenId != null">
+				WECHAT_OPEN_ID,
+			</if>
+			<if test="roleAuth != null">
+				ROLE_AUTH
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="cellphone != null">
+				#{cellphone},
+			</if>
+			<if test="email != null">
+				#{email},
+			</if>
+			<if test="password != null">
+				#{password},
+			</if>
+			<if test="nick != null">
+				#{nick},
+			</if>
+			<if test="avatar != null">
+				#{avatar},
+			</if>
+			<if test="wechatOpenId != null">
+				#{wechatOpenId},
+			</if>
+			<if test="roleAuth != null">
+				#{roleAuth}
+			</if>
+		</trim>
+	</insert>
+
+
+	<select id="select" parameterType="int" resultMap="UserMap">
+		SELECT *
+		FROM user_basic WHERE id = #{id}
+	</select>
+
+	<select id="selectByEmail" parameterType="string" resultMap="UserMap">
+		SELECT *
+		FROM user_basic WHERE EMAIL = #{email}
+	</select>
+
+	<select id="selectByWechat" parameterType="string" resultMap="UserMap">
+		SELECT *
+		FROM user_basic WHERE WECHAT_OPEN_ID = #{wechatOpenId}
+	</select>
+
+	<select id="selectByCellphone" parameterType="string" resultMap="UserMap">
+		SELECT *
+		FROM user_basic WHERE CELLPHONE=#{cellphone}
+	</select>
+
+	<update id="update" parameterType="com.arms.service.model.User">
+		UPDATE user_basic
+		<set>
+			<if test="cellphone != null">
+				CELLPHONE = #{cellphone},
+			</if>
+			<if test="email != null">
+				EMAIL = #{email},
+			</if>
+			<if test="password != null">
+				PASSWORD = #{password},
+			</if>
+			<if test="nick != null">
+				NICK = #{nick},
+			</if>
+			<if test="avatar != null">
+				AVATAR = #{avatar},
+			</if>
+			<if test="wechatOpenId != null">
+				WECHAT_OPEN_ID = #{wechatOpenId},
+			</if>
+			<if test="roleAuth != null">
+				ROLE_AUTH = #{roleAuth}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		DELETE FROM user_basic
+		where id = #{id}
+	</delete>
+
+	<select id="selectByRoleAuth" parameterType="string" resultMap="UserMap">
+		SELECT * FROM user_basic
+		<if test="roleAuth != null">
+			WHERE ROLE_AUTH=#{roleAuth}
+		</if>
+		ORDER BY ID DESC
+		<if test="start >= 0">
+			<if test="limit > 0">
+				limit ${start},${limit}
+			</if>
+		</if>
+	</select>
+
+	<select id="countByRoleAuth" parameterType="string" resultType="int">
+		SELECT COUNT(*) FROM user_basic
+		<if test="roleAuth != null or startTime != null or endTime != null">
+			<trim prefix="where" suffixOverrides="and">
+				<if test="roleAuth != null">
+					ROLE_AUTH=#{roleAuth} AND
+				</if>
+				<if test="startTime != null">
+					GMT_CREATE &gt;= #{startTime} AND
+				</if>
+				<if test="endTime != null">
+					GMT_CREATE &lt;= #{endTime} AND
+				</if>
+			</trim>
+		</if>
+	</select>
+
+	<select id="selectUserLendSourceIpBo" parameterType="string" resultMap="UserLendSourceIpBoMap">
+		SELECT a.*,COUNT(user_ip.USER_ID) AS COUNT_IP FROM
+		(SELECT user_basic.ID,CELLPHONE,user_basic.GMT_CREATE,
+		COUNT(user_lend_info.ID) AS COUNT_LEND_INFO,IFNULL(SOURCE,'') AS SOURCE,IP
+		FROM user_basic
+		LEFT JOIN user_lend_info ON user_lend_info.USER_ID=user_basic.ID
+		LEFT JOIN user_source ON user_source.USER_ID=user_basic.ID
+		LEFT JOIN user_ip ON user_ip.USER_ID=user_basic.ID
+		<if test="startTime != null or endTime != null">
+			<trim prefix="where" suffixOverrides="and">
+				<if test="startTime != null">
+					user_basic.GMT_CREATE &gt;= #{startTime} AND
+				</if>
+				<if test="endTime != null">
+					user_basic.GMT_CREATE &lt;= #{endTime} AND
+				</if>
+			</trim>
+		</if>
+		GROUP BY user_basic.ID
+		ORDER BY user_basic.ID DESC
+		<if test="start >= 0">
+			<if test="limit > 0">
+				LIMIT ${start},${limit}
+			</if>
+		</if>
+		) a
+		LEFT JOIN user_ip ON a.IP=user_ip.IP
+		GROUP BY a.ID
+		ORDER BY a.ID DESC
+	</select>
+</mapper>

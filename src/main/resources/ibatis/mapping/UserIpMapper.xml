@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.UserIpDao">
+    <resultMap id="UserIpMap" type="com.arms.service.model.UserIp">
+        <id column="USER_ID" property="userId" jdbcType="BIGINT" />
+        <result column="IP" property="ip" jdbcType="VARCHAR" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.arms.service.model.UserIp">
+        INSERT INTO user_ip(USER_ID,IP)
+        VALUES(#{userId},#{ip})
+    </insert>
+
+    <select id="select" parameterType="int" resultMap="UserIpMap">
+        SELECT * FROM user_ip
+        WHERE USER_ID=#{userId}
+    </select>
+</mapper>

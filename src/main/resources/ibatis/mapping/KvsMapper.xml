@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.arms.service.dao.KvsDao">
+    <resultMap id="BaseResultMap" type="com.arms.service.model.Kvs">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="KVS_NAME" property="kvsName" jdbcType="VARCHAR"/>
+        <result column="KVS_VALUE" property="kvsValue" jdbcType="VARCHAR"/>
+        <result column="KVS_GROUP" property="kvsGroup" jdbcType="VARCHAR"/>
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP"/>
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="int">
+        select *
+        from common_kvs where ID = #{id}
+    </select>
+
+    <select id="selectByKvsName" resultMap="BaseResultMap" parameterType="string">
+        select *
+        from common_kvs where KVS_NAME = #{kvsName}
+    </select>
+
+    <select id="selectByKvsGroup" resultMap="BaseResultMap" parameterType="string">
+        select *
+        from common_kvs where KVS_GROUP = #{kvsGroup}
+    </select>
+
+    <select id="selectByLimit" resultMap="BaseResultMap" parameterType="int">
+        select *
+        from common_kvs
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.arms.service.model.Kvs">
+        update common_kvs
+        <set>
+            <if test="kvsName != null">
+                KVS_NAME = #{kvsName},
+            </if>
+            <if test="kvsValue != null">
+                KVS_VALUE = #{kvsValue},
+            </if>
+            <if test="kvsGroup != null">
+                KVS_GROUP = #{kvsGroup}
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <insert id="insert" parameterType="com.arms.service.model.Kvs" useGeneratedKeys="true" keyProperty="id">
+        insert into common_kvs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="kvsName != null">
+                KVS_NAME,
+            </if>
+            <if test="kvsValue != null">
+                KVS_VALUE,
+            </if>
+            <if test="kvsGroup != null">
+                KVS_GROUP
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="kvsName != null">
+                #{kvsName},
+            </if>
+            <if test="kvsValue != null">
+                #{kvsValue},
+            </if>
+            <if test="kvsGroup != null">
+                #{kvsGroup}
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM common_kvs
+        where id = #{id}
+    </delete>
+
+</mapper>

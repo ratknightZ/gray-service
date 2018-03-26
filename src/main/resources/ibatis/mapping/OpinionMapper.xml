@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.OpinionDao">
+    <resultMap id="OpinionMap" type="com.arms.service.model.Opinion">
+        <id column="ID" property="id" jdbcType="INTEGER" />
+        <result column="THEME" property="theme" jdbcType="VARCHAR" />
+        <result column="DETAIL" property="detail" jdbcType="VARCHAR" />
+        <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="TINYINT" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="select" parameterType="int" resultMap="OpinionMap">
+        SELECT * FROM common_opinion WHERE ID=#{id}
+    </select>
+
+    <insert id="insert" parameterType="com.arms.service.model.Opinion" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO common_opinion
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="theme != null">
+                THEME,
+            </if>
+            <if test="detail != null">
+                DETAIL,
+            </if>
+            <if test="userId > 0">
+                USER_ID,
+            </if>
+            <if test="email != null">
+                EMAIL,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="theme != null">
+                #{theme},
+            </if>
+            <if test="detail != null">
+                #{detail},
+            </if>
+            <if test="userId > 0">
+                #{userId},
+            </if>
+            <if test="email != null">
+                #{email},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.arms.service.model.Opinion">
+        UPDATE common_opinion
+        <set>
+            <if test="theme != null">
+                THEME=#{theme},
+            </if>
+            <if test="detail != null">
+                DETAIL=#{detail},
+            </if>
+            <if test="userId > 0">
+                USER_ID=#{userId},
+            </if>
+            <if test="email != null">
+                EMAIL=#{email},
+            </if>
+            <if test="status > 0">
+                STATUS=#{status},
+            </if>
+        </set>
+        WHERE ID=#{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM common_opinion WHERE ID=#{id}
+    </delete>
+
+    <select id="selectByLimit" parameterType="string" resultMap="OpinionMap">
+        SELECT * FROM common_opinion
+        ORDER BY ID DESC
+        <if test="start >= 0">
+            <if test="limit > 0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(ID) FROM common_opinion
+    </select>
+</mapper>

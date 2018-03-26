@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.TerraceDao">
+    <resultMap id="TerraceMap" type="com.arms.service.model.Terrace">
+        <id column="ID" property="id" jdbcType="INTEGER" />
+        <result column="LOGO" property="logo" jdbcType="VARCHAR" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="RATE" property="rate" jdbcType="DECIMAL" />
+        <result column="LEND_TYPE" property="lendType" jdbcType="TINYINT" />
+        <result column="QUICKEST_TIME" property="quickestTime" jdbcType="DOUBLE" />
+        <result column="APPLY_FOR_CONDITION" property="applyForCondition" jdbcType="VARCHAR" />
+        <result column="NEED_INFORMATION" property="needInformation" jdbcType="VARCHAR" />
+        <result column="REPAYMENT_WAY" property="repaymentWay" jdbcType="TINYINT" />
+        <result column="HAVE_CREDIT_CARD" property="haveCreditCard" jdbcType="TINYINT" />
+        <result column="MIN_REPAYMENT_TIME_LIMIT" property="minRepaymentTimeLimit" jdbcType="SMALLINT" />
+        <result column="MAX_REPAYMENT_TIME_LIMIT" property="maxRepaymentTimeLimit" jdbcType="SMALLINT" />
+        <result column="CHOOSABLE_REPAYMENT_TIME_LIMIT" property="choosableRepaymentTimeLimit" jdbcType="VARCHAR" />
+        <result column="MAX_AMOUNT" property="maxAmount" jdbcType="INTEGER" />
+        <result column="MIN_AMOUNT" property="minAmount" jdbcType="INTEGER" />
+        <result column="STATUS" property="status" jdbcType="TINYINT" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+        <result column="PROFESSION" property="profession" jdbcType="VARCHAR" />
+        <result column="CREDIT" property="credit" jdbcType="VARCHAR" />
+        <result column="LEND_PURPOSE" property="lendPurpose" jdbcType="VARCHAR" />
+        <result column="URL" property="url" jdbcType="VARCHAR" />
+        <result column="APPLY_FOR_COUNT" property="applyForCount" jdbcType="INTEGER" />
+        <result column="SUCCESS_COUNT" property="successCount" jdbcType="INTEGER" />
+        <result column="SUCCESS_RATE" property="successRate" jdbcType="INTEGER" />
+        <result column="IS_HOT" property="isHot" jdbcType="TINYINT" />
+        <result column="UNIT_OF_QUICKEST_TIME" property="unitOfQuickestTime" jdbcType="TINYINT" />
+        <result column="QUICKEST_TIME_SECOND" property="quickestTimeSecond" jdbcType="INTEGER" />
+        <result column="UNIT_OF_REPAYMENT_TIME" property="unitOfRepaymentTime" jdbcType="TINYINT" />
+        <result column="RATE_DAY" property="rateDay" jdbcType="DECIMAL" />
+        <result column="UNIT_OF_RATE" property="unitOfRate" jdbcType="TINYINT" />
+        <result column="SORT_CODE" property="sortCode" jdbcType="SMALLINT" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.arms.service.model.Terrace" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pd_terrace
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logo != null">
+                LOGO,
+            </if>
+            <if test="name != null">
+                `NAME`,
+            </if>
+            <if test="rate >= 0">
+                RATE,
+            </if>
+            <if test="lendType >0">
+                LEND_TYPE,
+            </if>
+            <if test="quickestTime >= 0">
+                QUICKEST_TIME,
+            </if>
+            <if test="applyForCondition != null">
+                APPLY_FOR_CONDITION,
+            </if>
+            <if test="needInformation != null">
+                NEED_INFORMATION,
+            </if>
+            <if test="repaymentWay > 0">
+                REPAYMENT_WAY,
+            </if>
+            <if test="haveCreditCard > 0">
+                HAVE_CREDIT_CARD,
+            </if>
+            <if test="minRepaymentTimeLimit >= 0">
+                MIN_REPAYMENT_TIME_LIMIT,
+            </if>
+            <if test="maxRepaymentTimeLimit >= 0">
+                MAX_REPAYMENT_TIME_LIMIT,
+            </if>
+            <if test="choosableRepaymentTimeLimit != null">
+                CHOOSABLE_REPAYMENT_TIME_LIMIT,
+            </if>
+            <if test="maxAmount >= 0">
+                MAX_AMOUNT,
+            </if>
+            <if test="minAmount >= 0">
+                MIN_AMOUNT,
+            </if>
+            <if test="status > 0">
+                STATUS,
+            </if>
+            <if test="profession != null">
+                PROFESSION,
+            </if>
+            <if test="credit != null">
+                CREDIT,
+            </if>
+            <if test="lendPurpose != null">
+                LEND_PURPOSE,
+            </if>
+            <if test="url != null">
+                URL,
+            </if>
+            <if test="applyForCount > 0">
+                APPLY_FOR_COUNT,
+            </if>
+            <if test="successCount > 0">
+                SUCCESS_COUNT,
+            </if>
+            <if test="successRate > 0">
+                SUCCESS_RATE,
+            </if>
+            <if test="isHot > 0">
+                IS_HOT,
+            </if>
+            <if test="unitOfQuickestTime >= 0">
+                UNIT_OF_QUICKEST_TIME,
+            </if>
+            <if test="quickestTimeSecond > 0">
+                QUICKEST_TIME_SECOND,
+            </if>
+            <if test="unitOfRepaymentTime >= 0">
+                UNIT_OF_REPAYMENT_TIME,
+            </if>
+            <if test="rateDay > 0">
+                RATE_DAY,
+            </if>
+            <if test="unitOfRate >= 0">
+                UNIT_OF_RATE,
+            </if>
+            <if test="sortCode > 0">
+                SORT_CODE,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logo != null">
+                #{logo},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="rate >= 0">
+                #{rate},
+            </if>
+            <if test="lendType >0">
+                #{lendType},
+            </if>
+            <if test="quickestTime >= 0">
+                #{quickestTime},
+            </if>
+            <if test="applyForCondition != null">
+                #{applyForCondition},
+            </if>
+            <if test="needInformation != null">
+                #{needInformation},
+            </if>
+            <if test="repaymentWay > 0">
+                #{repaymentWay},
+            </if>
+            <if test="haveCreditCard > 0">
+                #{haveCreditCard},
+            </if>
+            <if test="minRepaymentTimeLimit >= 0">
+                #{minRepaymentTimeLimit},
+            </if>
+            <if test="maxRepaymentTimeLimit >= 0">
+                #{maxRepaymentTimeLimit},
+            </if>
+            <if test="choosableRepaymentTimeLimit != null">
+                #{choosableRepaymentTimeLimit},
+            </if>
+            <if test="maxAmount >= 0">
+                #{maxAmount},
+            </if>
+            <if test="minAmount >= 0">
+                #{minAmount},
+            </if>
+            <if test="status > 0">
+                #{status},
+            </if>
+            <if test="profession != null">
+                #{profession},
+            </if>
+            <if test="credit != null">
+                #{credit},
+            </if>
+            <if test="lendPurpose != null">
+                #{lendPurpose},
+            </if>
+            <if test="url != null">
+                #{url},
+            </if>
+            <if test="applyForCount > 0">
+                #{applyForCount},
+            </if>
+            <if test="successCount > 0">
+                #{successCount},
+            </if>
+            <if test="successRate > 0">
+                #{successRate},
+            </if>
+            <if test="isHot > 0">
+                #{isHot},
+            </if>
+            <if test="unitOfQuickestTime >= 0">
+                #{unitOfQuickestTime},
+            </if>
+            <if test="quickestTimeSecond > 0">
+                #{quickestTimeSecond},
+            </if>
+            <if test="unitOfRepaymentTime >= 0">
+                #{unitOfRepaymentTime},
+            </if>
+            <if test="rateDay > 0">
+                #{rateDay},
+            </if>
+            <if test="unitOfRate >= 0">
+                #{unitOfRate},
+            </if>
+            <if test="sortCode > 0">
+                #{sortCode},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="select" parameterType="int" resultMap="TerraceMap">
+        SELECT * FROM pd_terrace WHERE ID=#{id}
+    </select>
+
+    <update id="update" parameterType="com.arms.service.model.Terrace">
+        UPDATE pd_terrace
+        <set>
+            <if test="logo != null">
+                LOGO=#{logo},
+            </if>
+            <if test="name != null">
+                `NAME`=#{name},
+            </if>
+            <if test="rate > 0">
+                RATE=#{rate},
+            </if>
+            <if test="lendType > 0">
+                LEND_TYPE=#{lendType},
+            </if>
+            <if test="quickestTime > 0">
+                QUICKEST_TIME=#{quickestTime},
+            </if>
+            <if test="applyForCondition != null">
+                APPLY_FOR_CONDITION=#{applyForCondition},
+            </if>
+            <if test="needInformation != null">
+                NEED_INFORMATION=#{needInformation},
+            </if>
+            <if test="repaymentWay > 0">
+                REPAYMENT_WAY=#{repaymentWay},
+            </if>
+            <if test="haveCreditCard > 0">
+                HAVE_CREDIT_CARD=#{haveCreditCard},
+            </if>
+            <if test="minRepaymentTimeLimit > 0">
+                MIN_REPAYMENT_TIME_LIMIT=#{minRepaymentTimeLimit},
+            </if>
+            <if test="maxRepaymentTimeLimit > 0">
+                MAX_REPAYMENT_TIME_LIMIT=#{maxRepaymentTimeLimit},
+            </if>
+            <if test="choosableRepaymentTimeLimit != null">
+                CHOOSABLE_REPAYMENT_TIME_LIMIT=#{choosableRepaymentTimeLimit},
+            </if>
+            <if test="maxAmount > 0">
+                MAX_AMOUNT=#{maxAmount},
+            </if>
+            <if test="minAmount > 0">
+                MIN_AMOUNT=#{minAmount},
+            </if>
+            <if test="status > 0">
+                STATUS=#{status},
+            </if>
+            <if test="profession != null">
+                PROFESSION=#{profession},
+            </if>
+            <if test="credit != null">
+                CREDIT=#{credit},
+            </if>
+            <if test="lendPurpose != null">
+                LEND_PURPOSE=#{lendPurpose},
+            </if>
+            <if test="url != null">
+                URL=#{url},
+            </if>
+            <if test="applyForCount > 0">
+                APPLY_FOR_COUNT=#{applyForCount},
+            </if>
+            <if test="successCount > 0">
+                SUCCESS_COUNT=#{successCount},
+            </if>
+            <if test="successRate > 0">
+                SUCCESS_RATE=#{successRate},
+            </if>
+            <if test="isHot > 0">
+                IS_HOT=#{isHot},
+            </if>
+            <if test="unitOfQuickestTime >= 0">
+                UNIT_OF_QUICKEST_TIME=#{unitOfQuickestTime},
+            </if>
+            <if test="quickestTimeSecond > 0">
+                QUICKEST_TIME_SECOND=#{quickestTimeSecond},
+            </if>
+            <if test="unitOfRepaymentTime >= 0">
+                UNIT_OF_REPAYMENT_TIME=#{unitOfRepaymentTime},
+            </if>
+            <if test="rateDay > 0">
+                RATE_DAY=#{rateDay},
+            </if>
+            <if test="unitOfRate >= 0">
+                UNIT_OF_RATE=#{unitOfRate},
+            </if>
+            <if test="sortCode > 0">
+                SORT_CODE=#{sortCode},
+            </if>
+            UPDATE_TIME=NOW()
+        </set>
+        WHERE ID=#{id}
+    </update>
+    
+    <delete id="delete" parameterType="int">
+        DELETE FROM pd_terrace WHERE ID=#{id}
+    </delete>
+
+    <select id="selectByCondition" parameterType="string" resultMap="TerraceMap">
+        SELECT pd_terrace.* FROM pd_terrace
+        <if test="typeId > 0">
+            INNER JOIN terrace_type_r ON terrace_type_r.TERRACE_ID=ID
+        </if>
+        <if test="showChannel > 0">
+            INNER JOIN pd_terrace_show_channel_r ON pd_terrace_show_channel_r.TERRACE_ID=ID
+        </if>
+        WHERE STATUS=2
+        <if test="typeId > 0">
+            AND TYPE_ID=#{typeId}
+        </if>
+        <if test="showChannel > 0">
+            AND SHOW_CHANNEL_ID=#{showChannel}
+        </if>
+        <if test="maxAmount > 0">
+            AND MAX_AMOUNT &gt;= #{maxAmount}
+        </if>
+        <if test="minAmount > 0">
+            AND MIN_AMOUNT &lt;= #{minAmount}
+        </if>
+        <if test="timeLimit > 0">
+            AND MAX_REPAYMENT_TIME_LIMIT &gt;= #{timeLimit}
+            AND MIN_REPAYMENT_TIME_LIMIT &lt;= #{timeLimit}
+        </if>
+        <if test="haveCreditCard > 0">
+            AND HAVE_CREDIT_CARD=#{haveCreditCard}
+        </if>
+        <if test="repaymentWay > 0">
+            AND REPAYMENT_WAY=#{repaymentWay}
+        </if>
+        <if test="profession != null and profession != '' and profession != '不限'">
+            AND PROFESSION LIKE CONCAT('%',#{profession},'%')
+        </if>
+        <if test="credit != null and credit != '' and credit != '不限'">
+            AND CREDIT LIKE CONCAT('%',#{credit},'%')
+        </if>
+        <if test="lendPurpose != null and lendPurpose != '' and lendPurpose != '不限'">
+            AND LEND_PURPOSE LIKE CONCAT('%',#{lendPurpose},'%')
+        </if>
+        <choose>
+            <when test="sortWay == 1">
+                ORDER BY QUICKEST_TIME_SECOND
+            </when>
+            <when test="sortWay == 2">
+                ORDER BY SUCCESS_RATE DESC
+            </when>
+            <otherwise>
+                ORDER BY SORT_CODE DESC,UPDATE_TIME DESC
+            </otherwise>
+        </choose>
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+    
+    <select id="selectByIsHot" parameterType="string" resultMap="TerraceMap">
+        SELECT * FROM pd_terrace
+        <if test="showChannel > 0">
+            INNER JOIN pd_terrace_show_channel_r ON pd_terrace_show_channel_r.TERRACE_ID=ID
+        </if>
+        WHERE STATUS=2
+        <if test="isHot > 0">
+            AND IS_HOT=#{isHot}
+        </if>
+        <if test="showChannel > 0">
+            AND SHOW_CHANNEL_ID=#{showChannel}
+        </if>
+        ORDER BY SORT_CODE DESC
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="selectByStatus" parameterType="string" resultMap="TerraceMap">
+        SELECT * FROM pd_terrace
+        <where>
+            <if test="status > 0">
+                STATUS=#{status}
+            </if>
+            <if test="terraceName != null and terraceName != ''">
+                `NAME` LIKE CONCAT("%",#{terraceName},"%")
+            </if>
+        </where>
+        ORDER BY STATUS DESC,UPDATE_TIME DESC
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="countByStatus" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM pd_terrace
+        <where>
+            <if test="status > 0">
+                STATUS=#{status}
+            </if>
+            <if test="terraceName != null and terraceName != ''">
+                `NAME` LIKE CONCAT("%",#{terraceName},"%")
+            </if>
+        </where>
+    </select>
+
+    <select id="selectIdByStatus" parameterType="int" resultType="Integer">
+        SELECT ID FROM pd_terrace
+        <if test="status > 0">
+            WHERE STATUS=#{status}
+        </if>
+    </select>
+
+    <update id="addApplyForCount" parameterType="int">
+        UPDATE pd_terrace
+        SET APPLY_FOR_COUNT=APPLY_FOR_COUNT+1
+        WHERE ID=#{id}
+    </update>
+</mapper>

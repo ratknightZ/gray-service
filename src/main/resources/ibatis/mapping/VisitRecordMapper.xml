@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.VisitRecordDao">
+    <insert id="insert" parameterType="string">
+        INSERT INTO common_visit_record(IP,SOURCE)
+        VALUES(#{ip},#{source})
+    </insert>
+
+    <select id="countByIP" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM common_visit_record
+        WHERE IP=#{ip}
+        <choose>
+            <when test="unitCode == 1">
+                AND TO_DAYS(common_visit_record.GMT_CREATE) = TO_DAYS(NOW())
+            </when>
+            <when test="unitCode == 2">
+                AND YEARWEEK(date_format(common_visit_record.GMT_CREATE,'%Y-%m-%d')) = YEARWEEK(now())
+            </when>
+            <when test="unitCode == 3">
+                AND date_format(common_visit_record.GMT_CREATE,'%Y-%m')=date_format(now(),'%Y-%m')
+            </when>
+        </choose>
+    </select>
+
+    <delete id="deleteYesterdayRecord">
+        DELETE FROM common_visit_record
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())-1
+    </delete>
+</mapper>

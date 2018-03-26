@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.LendInfoDao">
+    <resultMap id="LendInfoMap" type="com.arms.service.model.LendInfo">
+        <id column="ID" property="id" jdbcType="BIGINT" />
+        <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+        <result column="TERRACE_ID" property="terraceId" jdbcType="INTEGER" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="ID_CARD" property="idCard" jdbcType="VARCHAR" />
+        <result column="LEND_PURPOSE" property="lendPurpose" jdbcType="VARCHAR" />
+        <result column="APPLY_FOR_AMOUNT" property="applyForAmount" jdbcType="DECIMAL" />
+        <result column="TIME_LIMIT" property="timeLimit" jdbcType="SMALLINT" />
+        <result column="PROFESSION" property="profession" jdbcType="VARCHAR" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="UserLendInfoBoMap" type="com.arms.service.bo.UserLendInfoBo">
+        <result column="ID" property="lendInfoId" jdbcType="BIGINT" />
+        <result column="SOURCE" property="source" jdbcType="VARCHAR" />
+        <result column="CELLPHONE" property="cellphone" jdbcType="VARCHAR" />
+        <result column="NAME" property="terraceName" jdbcType="VARCHAR" />
+        <result column="APPLY_FOR_AMOUNT" property="applyForAmount" jdbcType="DECIMAL" />
+        <result column="TIME_LIMIT" property="timeLimit" jdbcType="SMALLINT" />
+        <result column="GMT_CREATE" property="applyForTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="select" parameterType="int" resultMap="LendInfoMap">
+        SELECT * FROM user_lend_info WHERE USER_ID=#{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.arms.service.model.LendInfo">
+        INSERT INTO user_lend_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId > 0">
+                USER_ID,
+            </if>
+            <if test="terraceId > 0">
+                TERRACE_ID,
+            </if>
+            <if test="name != null">
+                `NAME`,
+            </if>
+            <if test="idCard != null">
+                ID_CARD,
+            </if>
+            <if test="lendPurpose != null">
+                LEND_PURPOSE,
+            </if>
+            <if test="applyForAmount > 0">
+                APPLY_FOR_AMOUNT,
+            </if>
+            <if test="timeLimit > 0">
+                TIME_LIMIT,
+            </if>
+            <if test="profession != null">
+                PROFESSION,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="userId > 0">
+                #{userId},
+            </if>
+            <if test="terraceId > 0">
+                #{terraceId},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="idCard != null">
+                #{idCard},
+            </if>
+            <if test="lendPurpose != null">
+                #{lendPurpose},
+            </if>
+            <if test="applyForAmount > 0">
+                #{applyForAmount},
+            </if>
+            <if test="timeLimit > 0">
+                #{timeLimit},
+            </if>
+            <if test="profession != null">
+                #{profession},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.arms.service.model.LendInfo">
+        UPDATE user_lend_info
+        <set>
+            <if test="name != null">
+                `NAME`=#{name},
+            </if>
+            <if test="idCard != null">
+                ID_CARD=#{idCard},
+            </if>
+            <if test="lendPurpose != null">
+                LEND_PURPOSE=#{lendPurpose},
+            </if>
+            <if test="applyForAmount > 0">
+                APPLY_FOR_AMOUNT=#{applyForAmount},
+            </if>
+            <if test="timeLimit > 0">
+                TIME_LIMIT=#{timeLimit},
+            </if>
+            <if test="profession != null">
+                PROFESSION=#{profession},
+            </if>
+        </set>
+        WHERE USER_ID=#{userId}
+    </update>
+
+    <select id="selectList" parameterType="string" resultMap="LendInfoMap">
+        SELECT * FROM user_lend_info
+        <if test="startTime != null or endTime != null">
+            <trim prefix="where" suffixOverrides="and">
+                <if test="startTime != null">
+                    GMT_CREATE &gt; #{startTime} AND
+                </if>
+                <if test="endTime != null">
+                    GMT_CREATE &lt; #{endTime} AND
+                </if>
+            </trim>
+        </if>
+        GROUP BY USER_ID,TERRACE_ID
+        ORDER BY ID DESC
+        <if test="start >= 0">
+            <if test="limit > 0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="countAll" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM
+        (SELECT ID FROM user_lend_info
+        <if test="startTime != null or endTime != null">
+            <trim prefix="where" suffixOverrides="and">
+                <if test="startTime != null">
+                    GMT_CREATE &gt;= #{startTime} AND
+                </if>
+                <if test="endTime != null">
+                    GMT_CREATE &lt;= #{endTime} AND
+                </if>
+            </trim>
+        </if>
+        GROUP BY USER_ID,TERRACE_ID) a
+    </select>
+
+    <select id="selectUserLendInfoBo" parameterType="string" resultMap="UserLendInfoBoMap">
+        SELECT user_lend_info.ID,IFNULL(SOURCE,'') AS SOURCE,CELLPHONE,pd_terrace.`NAME`,APPLY_FOR_AMOUNT,
+        TIME_LIMIT,user_lend_info.GMT_CREATE
+        FROM user_lend_info
+        INNER JOIN user_basic ON user_lend_info.USER_ID=user_basic.ID
+        INNER JOIN pd_terrace ON user_lend_info.TERRACE_ID=pd_terrace.ID
+        LEFT JOIN user_source ON user_lend_info.USER_ID=user_source.USER_ID
+        <if test="source != '' or terraceName != '' or startTime != null or endTime != null">
+            <trim prefix="where" suffixOverrides="and">
+                <if test="source != ''">
+                    SOURCE=#{source} AND
+                </if>
+                <if test="terraceName != ''">
+                    pd_terrace.`NAME`=#{terraceName} AND
+                </if>
+                <if test="startTime != null">
+                    user_lend_info.GMT_CREATE &gt;= #{startTime} AND
+                </if>
+                <if test="endTime != null">
+                    user_lend_info.GMT_CREATE &lt;= #{endTime} AND
+                </if>
+            </trim>
+        </if>
+        GROUP BY user_lend_info.USER_ID,TERRACE_ID
+        ORDER BY user_lend_info.ID DESC
+        <if test="start >= 0">
+            <if test="limit > 0">
+                LIMIT ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="countUserLendInfoBo" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM
+        (SELECT user_lend_info.ID
+        FROM user_lend_info
+        INNER JOIN pd_terrace ON user_lend_info.TERRACE_ID=pd_terrace.ID
+        LEFT JOIN user_source ON user_lend_info.USER_ID=user_source.USER_ID
+        <if test="source != '' or terraceName != '' or startTime != null or endTime != null">
+            <trim prefix="where" suffixOverrides="and">
+                <if test="source != ''">
+                    SOURCE=#{source} AND
+                </if>
+                <if test="terraceName != ''">
+                    pd_terrace.`NAME`=#{terraceName} AND
+                </if>
+                <if test="startTime != null">
+                    user_lend_info.GMT_CREATE &gt;= #{startTime} AND
+                </if>
+                <if test="endTime != null">
+                    user_lend_info.GMT_CREATE &lt;= #{endTime} AND
+                </if>
+            </trim>
+        </if>
+        GROUP BY user_lend_info.USER_ID,TERRACE_ID) a
+    </select>
+
+    <select id="independentUserApplyForCount" parameterType="int" resultType="int">
+        SELECT COUNT(COUNT_BY_USER_ID) FROM
+        (SELECT COUNT(ID) AS COUNT_BY_USER_ID FROM user_lend_info
+        WHERE TERRACE_ID=#{terraceId}
+        GROUP BY USER_ID) a
+    </select>
+
+    <select id="yesterdayIndependentUserApplyForCount" parameterType="int" resultType="int">
+        SELECT COUNT(COUNT_BY_USER_ID) FROM
+        (SELECT COUNT(ID) AS COUNT_BY_USER_ID FROM user_lend_info
+        WHERE TERRACE_ID=#{terraceId}
+        AND TO_DAYS(NOW())-1 = TO_DAYS(GMT_CREATE)
+        GROUP BY USER_ID) a
+    </select>
+</mapper>

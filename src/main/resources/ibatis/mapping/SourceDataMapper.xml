@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.SourceDataDao">
+    <resultMap id="SourceDataMap" type="com.arms.service.model.SourceData">
+        <id column="ID" property="id" jdbcType="BIGINT" />
+        <result column="SOURCE" property="source" jdbcType="VARCHAR" />
+        <result column="PV" property="pv" jdbcType="INTEGER" />
+        <result column="UV" property="uv" jdbcType="INTEGER" />
+        <result column="REGISTER" property="register" jdbcType="INTEGER" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="statistics">
+        INSERT INTO common_source_data(SOURCE,PV,UV,REGISTER)
+        SELECT SOURCE,PV,UV,REGISTER FROM
+        (SELECT IFNULL(a.SOURCE,b.SOURCE) AS SOURCE,IFNULL(a.PV,0) AS PV,IFNULL(a.UV,0) AS UV,IFNULL(b.REGISTER,0) AS REGISTER FROM
+        (SELECT SOURCE,count(*) AS PV,COUNT(DISTINCT IP) AS UV
+        FROM common_visit_record
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())-1
+        GROUP BY SOURCE) a
+        LEFT JOIN
+        (SELECT SOURCE,COUNT(*) AS REGISTER FROM user_source
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())-1
+        GROUP BY SOURCE) b
+        ON a.SOURCE=b.SOURCE) c
+        UNION
+        SELECT * FROM
+        (SELECT IFNULL(a.SOURCE,b.SOURCE) AS SOURCE,IFNULL(a.PV,0) AS PV,IFNULL(a.UV,0) AS UV,IFNULL(b.REGISTER,0) AS REGISTER FROM
+        (SELECT SOURCE,count(*) AS PV,COUNT(DISTINCT IP) AS UV
+        FROM common_visit_record
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())-1
+        GROUP BY SOURCE) a
+        RIGHT JOIN
+        (SELECT SOURCE,COUNT(*) AS REGISTER FROM user_source
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())-1
+        GROUP BY SOURCE) b
+        ON a.SOURCE=b.SOURCE) d
+    </insert>
+
+    <select id="selectTodayData" parameterType="string" resultMap="SourceDataMap">
+        SELECT SOURCE,PV,UV,REGISTER FROM
+        (SELECT IFNULL(a.SOURCE,b.SOURCE) AS SOURCE,IFNULL(a.PV,0) AS PV,IFNULL(a.UV,0) AS UV,IFNULL(b.REGISTER,0) AS REGISTER FROM
+        (SELECT SOURCE,count(*) AS PV,COUNT(DISTINCT IP) AS UV
+        FROM common_visit_record
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())
+        <if test="source != null and source != ''">
+            AND SOURCE=#{source}
+        </if>
+        GROUP BY SOURCE) a
+        LEFT JOIN
+        (SELECT SOURCE,COUNT(*) AS REGISTER FROM user_source
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())
+        <if test="source != null and source != ''">
+            AND SOURCE=#{source}
+        </if>
+        GROUP BY SOURCE) b
+        ON a.SOURCE=b.SOURCE) c
+        UNION
+        SELECT * FROM
+        (SELECT IFNULL(a.SOURCE,b.SOURCE) AS SOURCE,IFNULL(a.PV,0) AS PV,IFNULL(a.UV,0) AS UV,IFNULL(b.REGISTER,0) AS REGISTER FROM
+        (SELECT SOURCE,count(*) AS PV,COUNT(DISTINCT IP) AS UV
+        FROM common_visit_record
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())
+        <if test="source != null and source != ''">
+            AND SOURCE=#{source}
+        </if>
+        GROUP BY SOURCE) a
+        RIGHT JOIN
+        (SELECT SOURCE,COUNT(*) AS REGISTER FROM user_source
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())
+        <if test="source != null and source != ''">
+            AND SOURCE=#{source}
+        </if>
+        GROUP BY SOURCE) b
+        ON a.SOURCE=b.SOURCE) d
+    </select>
+
+    <select id="selectHistoryData" parameterType="string" resultMap="SourceDataMap">
+        SELECT ID,SOURCE,PV,UV,REGISTER,date_sub(GMT_CREATE,interval 1 day) AS GMT_CREATE,GMT_UPDATE
+        FROM common_source_data
+        WHERE TO_DAYS(GMT_CREATE)-1 &gt;= TO_DAYS(#{startTime})
+        AND TO_DAYS(GMT_CREATE)-1 &lt;= TO_DAYS(#{endTime})
+        <if test="source != null and source != ''">
+            AND SOURCE=#{source}
+        </if>
+    </select>
+
+    <select id="selectYesterdayData" resultMap="SourceDataMap">
+        SELECT * FROM common_source_data
+        WHERE TO_DAYS(GMT_CREATE) = TO_DAYS(NOW())
+    </select>
+</mapper>

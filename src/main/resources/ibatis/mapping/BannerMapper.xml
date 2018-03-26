@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.arms.service.dao.BannerDao">
+    <resultMap id="BannerMap" type="com.arms.service.model.Banner">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="BANNER_NAME" property="bannerName" jdbcType="VARCHAR"/>
+        <result column="REDIRECT_TYPE" property="redirectType" jdbcType="SMALLINT"/>
+        <result column="HOVER_TIP" property="hoverTip" jdbcType="VARCHAR"/>
+        <result column="PIC_URL" property="picUrl" jdbcType="VARCHAR"/>
+        <result column="LINK_URL" property="linkUrl" jdbcType="VARCHAR"/>
+        <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP"/>
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.arms.service.model.Banner" useGeneratedKeys="true" keyProperty="id">
+        insert into activity_banner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bannerName != null">
+                BANNER_NAME,
+            </if>
+            <if test="redirectType >= 0">
+                REDIRECT_TYPE,
+            </if>
+            <if test="hoverTip != null">
+                HOVER_TIP,
+            </if>
+            <if test="picUrl != null">
+                PIC_URL,
+            </if>
+            <if test="linkUrl != null">
+                LINK_URL,
+            </if>
+            <if test="groupName != null">
+                GROUP_NAME,
+            </if>
+            <if test="description != null">
+                DESCRIPTION
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bannerName != null">
+                #{bannerName},
+            </if>
+            <if test="redirectType >= 0">
+                #{redirectType},
+            </if>
+            <if test="hoverTip != null">
+                #{hoverTip},
+            </if>
+            <if test="picUrl != null">
+                #{picUrl},
+            </if>
+            <if test="linkUrl != null">
+                #{linkUrl},
+            </if>
+            <if test="groupName != null">
+                #{groupName},
+            </if>
+            <if test="description != null">
+                #{description}
+            </if>
+        </trim>
+    </insert>
+
+    <select id="select" resultMap="BannerMap" parameterType="int">
+        select *
+        from activity_banner where ID = #{id}
+    </select>
+
+    <select id="selectByName" resultMap="BannerMap" parameterType="string">
+        select *
+        from activity_banner where BANNER_NAME = #{bannerName}
+    </select>
+
+    <select id="selectByGroup" resultMap="BannerMap" parameterType="string">
+        select *
+        from activity_banner where GROUP_NAME = #{groupName}
+    </select>
+
+    <update id="update" parameterType="com.arms.service.model.Banner">
+        update activity_banner
+        <set>
+            <if test="bannerName != null">
+                BANNER_NAME = #{bannerName},
+            </if>
+            <if test="redirectType >= 0">
+                REDIRECT_TYPE = #{redirectType},
+            </if>
+            <if test="hoverTip != null">
+                HOVER_TIP = #{hoverTip},
+            </if>
+            <if test="picUrl != null">
+                PIC_URL = #{picUrl},
+            </if>
+            <if test="linkUrl != null">
+                LINK_URL = #{linkUrl},
+            </if>
+            <if test="groupName != null">
+                GROUP_NAME = #{groupName},
+            </if>
+            <if test="description != null">
+                DESCRIPTION = #{description}
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <select id="selectList" parameterType="string" resultMap="BannerMap">
+        SELECT * FROM activity_banner
+        ORDER BY GMT_UPDATE DESC
+        <if test="start >= 0">
+            <if test="limit > 0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM activity_banner
+    </select>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM activity_banner WHERE ID=#{id}
+    </delete>
+</mapper>

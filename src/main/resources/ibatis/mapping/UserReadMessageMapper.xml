@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.UserReadMessageDao">
+    <resultMap id="UserReadMessageMap" type="com.arms.service.model.UserReadMessage">
+        <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+        <result column="MESSAGE_ID" property="messageId" jdbcType="BIGINT" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="insert" parameterType="string">
+        INSERT INTO user_read_message_record(USER_ID,MESSAGE_ID)
+        VALUES(#{userId},#{messageId})
+    </insert>
+
+    <select id="select" parameterType="string" resultMap="UserReadMessageMap">
+        SELECT * FROM user_read_message_record
+        WHERE USER_ID=#{userId} AND MESSAGE_ID=#{messageId}
+    </select>
+</mapper>

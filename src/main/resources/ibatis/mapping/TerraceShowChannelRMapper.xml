@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.TerraceShowChannelRDao">
+    <resultMap id="terraceShowChannelRMap" type="com.arms.service.model.TerraceShowChannelR">
+        <result column="TERRACE_ID" property="terraceId" jdbcType="INTEGER" />
+        <result column="SHOW_CHANNEL_ID" property="showChannelId" jdbcType="INTEGER" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="insert" parameterType="com.arms.service.model.TerraceShowChannelR">
+        INSERT INTO pd_terrace_show_channel_r
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="terraceId > 0">
+                TERRACE_ID,
+            </if>
+            <if test="showChannelId > 0">
+                SHOW_CHANNEL_ID,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="terraceId > 0">
+                #{terraceId},
+            </if>
+            <if test="showChannelId > 0">
+                #{showChannelId},
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectByShowChannelId" parameterType="string" resultMap="terraceShowChannelRMap">
+        SELECT * FROM pd_terrace_show_channel_r
+        WHERE SHOW_CHANNEL_ID=#{showChannelId}
+        <if test="start >= 0">
+            <if test="limit > 0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="selectByTerraceId" parameterType="int" resultMap="terraceShowChannelRMap">
+        SELECT * FROM pd_terrace_show_channel_r
+        WHERE TERRACE_ID=#{terraceId}
+    </select>
+
+    <delete id="delete" parameterType="com.arms.service.model.TerraceShowChannelR">
+        DELETE FROM pd_terrace_show_channel_r
+        WHERE TERRACE_ID=#{terraceId} AND SHOW_CHANNEL_ID=#{showChannelId}
+    </delete>
+
+    <delete id="deleteByTerraceId" parameterType="int">
+        DELETE FROM pd_terrace_show_channel_r
+        WHERE TERRACE_ID=#{terraceId}
+    </delete>
+</mapper>

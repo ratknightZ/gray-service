@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arms.service.dao.TerraceTypeRDao">
+    <resultMap id="TerraceTypeRMap" type="com.arms.service.model.TerraceTypeR">
+        <result column="TERRACE_ID" property="terraceId" jdbcType="INTEGER" />
+        <result column="TYPE_ID" property="typeId" jdbcType="INTEGER" />
+        <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+        <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.arms.service.model.TerraceTypeR" >
+        INSERT INTO terrace_type_r(TERRACE_ID,TYPE_ID) VALUES(#{terraceId},#{typeId})
+    </insert>
+
+    <select id="selectByTypeId" parameterType="string" resultMap="TerraceTypeRMap">
+        SELECT * FROM terrace_type_r WHERE TYPE_ID=#{typeId}
+        <if test="start >=0">
+            <if test="limit >0">
+                limit ${start},${limit}
+            </if>
+        </if>
+    </select>
+
+    <select id="selectByTerraceId" parameterType="int" resultMap="TerraceTypeRMap">
+        SELECT * FROM terrace_type_r WHERE TERRACE_ID=#{terraceId}
+    </select>
+
+    <delete id="delete" parameterType="com.arms.service.model.TerraceTypeR">
+        DELETE FROM terrace_type_r
+        WHERE TERRACE_ID=#{terraceId} AND TYPE_ID=#{typeId}
+    </delete>
+
+    <delete id="deleteByTerraceId" parameterType="int">
+        DELETE FROM terrace_type_r WHERE TERRACE_ID=#{terraceId}
+    </delete>
+</mapper>
